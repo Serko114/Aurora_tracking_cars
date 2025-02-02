@@ -1,0 +1,4 @@
+video_reader:
+  src: test_videos/test_video.mp4
+  skip_secs: 0
+  roads_info: conf/entry_exit_lanes.json
