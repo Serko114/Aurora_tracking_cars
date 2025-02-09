@@ -1,4 +1,4 @@
 video_reader:
   src: aurora.mp4 # путь до файла обработки или номер камеры (int) или ссылки на m3u8 / rtsp поток
-  # skip_secs : 0  # считываем кадры раз в <skip_secs> секунд
-  # roads_info: conf/entry_exit_lanes.json  # json файл с координатами дорог на видео
+  skip_secs : 0  # считываем кадры раз в <skip_secs> секунд
+  roads_info: conf/entry_exit_lanes.json  # json файл с координатами дорог на видео
