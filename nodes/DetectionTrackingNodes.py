@@ -17,13 +17,13 @@ class DetectionTrackingNodes:
 
         config_yolo = config["detection_node"]
         self.model = YOLO(config_yolo["weight_pth"], task='detect')
-        self.classes = self.model.names
+        self.classes = config_yolo["classes_to_detect"]  # self.model.names
         self.conf = config_yolo["confidence"]
         self.iou = config_yolo["iou"]
         self.imgsz = config_yolo["imgsz"]
         self.classes_to_detect = config_yolo["classes_to_detect"]
 
-        config_bytetrack= config["tracking_node"]
+        config_bytetrack = config["tracking_node"]
 
         # ByteTrack param
         first_track_thresh = config_bytetrack["first_track_thresh"]
@@ -40,37 +40,55 @@ class DetectionTrackingNodes:
         # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
         if isinstance(frame_element, VideoEndBreakElement):
             return frame_element
+        # Если пришел правильный формат, то продолжаем, иначе будет ошибка assert
+        # с указанием фактического типа данных
         assert isinstance(
             frame_element, FrameElement
         ), f"DetectionTrackingNodes | Неправильный формат входного элемента {type(frame_element)}"
 
         frame = frame_element.frame.copy()
 
-        outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=False,
-                                     iou=self.iou, classes=self.classes_to_detect)
-
+        outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=True,
+                                     iou=self.iou, classes=self.classes_to_detect,
+                                     )
+        print('--------------------')
+        print(outputs[0])
+        print('--------------------')
         frame_element.detected_conf = outputs[0].boxes.conf.cpu().tolist()
         detected_cls = outputs[0].boxes.cls.cpu().int().tolist()
+        print('--------------------')
+        print(frame_element.detected_conf)
+        print('--------------------')
         frame_element.detected_cls = [self.classes[i] for i in detected_cls]
-        frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu().int().tolist()
+        print('--------------------')
+        print(frame_element.detected_cls)
+        print('--------------------')
+        frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu(
+        ).int().tolist()
+        print('--------------------')
+        print(frame_element.detected_xyxy)
+        print('--------------------')
 
         # Преподготовка данных на подачу в трекер
         detections_list = self._get_results_dor_tracker(outputs)
-
+        print(detections_list)
         # Если детекций нет, то оправляем пустой массив
         if len(detections_list) == 0:
             detections_list = np.empty((0, 6))
 
-        track_list = self.tracker.update(torch.tensor(detections_list), xyxy=True)
+        track_list = self.tracker.update(
+            torch.tensor(detections_list), xyxy=True)
 
         # Получение id list
         frame_element.id_list = [int(t.track_id) for t in track_list]
 
         # Получение box list
-        frame_element.tracked_xyxy = [list(t.tlbr.astype(int)) for t in track_list]
+        frame_element.tracked_xyxy = [
+            list(t.tlbr.astype(int)) for t in track_list]
 
         # Получение object class names
-        frame_element.tracked_cls = [self.classes[int(t.class_name)] for t in track_list]
+        frame_element.tracked_cls = [
+            self.classes[int(t.class_name)] for t in track_list]
 
         # Получение conf scores
         frame_element.tracked_conf = [t.score for t in track_list]
@@ -89,7 +107,7 @@ class DetectionTrackingNodes:
                 confidence = result.boxes.conf.cpu().numpy()
 
                 class_id_value = (
-                    2  # Будем все трекуемые объекты считать классом car чтобы не было ошибок
+                    0  # Будем все трекуемые объекты считать классом car чтобы не было ошибок
                 )
 
                 merged_detection = [

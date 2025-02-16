@@ -26,7 +26,8 @@ class VideoReader:
         self.stream = cv2.VideoCapture(self.video_pth)
 
         self.skip_secs = config["skip_secs"]
-        self.last_frame_timestamp = -1  # специально отрицательное при инициализации (костыль)
+        # специально отрицательное при инициализации (костыль)
+        self.last_frame_timestamp = -1
         self.first_timestamp = 0  # Значение времени в момент первого кадра потока
 
         self.break_element_sent = False  # Был ли отправлен элемент прерывания видеопотока
@@ -52,7 +53,8 @@ class VideoReader:
         while True:
             ret, frame = self.stream.read()
             if not ret:
-                logger.warning("Can't receive frame (stream end?). Exiting ...")
+                logger.warning(
+                    "Can't receive frame (stream end?). Exiting ...")
                 if not self.break_element_sent:
                     self.break_element_sent = True
                     # отправим VideoEndBreakElement чтобы обозначить окончание потока
@@ -85,3 +87,9 @@ class VideoReader:
             frame_number += 1
 
             yield FrameElement(self.video_source, frame, timestamp, frame_number, self.roads_info)
+            # на выходе:
+            # путь до видео,
+            # кадр (3, 1080, 1920),
+            # время,
+            # номер_кадра,
+            # прямоугольник_на_дороге

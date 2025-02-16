@@ -38,10 +38,10 @@ class CalcStatisticsNode:
         info_dictionary["cars_amount"] = round(np.mean(self.cars_buffer))
         roads_activity = {
             1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
+            # 2: 0,
+            # 3: 0,
+            # 4: 0,
+            # 5: 0,
         }  # всего 5 дорог (занулим стартовое значение)
 
         # Посчитаем чило машин которые довно живут и имеют значения дороги приезда

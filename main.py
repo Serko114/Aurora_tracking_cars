@@ -18,19 +18,19 @@ def main(config) -> None:
     calc_statistics_node = CalcStatisticsNode(config)
     show_node = ShowNode(config)
 
-    # save_video = config["pipeline"]["save_video"]
-    # send_info_db = config["pipeline"]["send_info_db"]
-    # show_in_web = config["pipeline"]["show_in_web"]
+    save_video = config["pipeline"]["save_video"]
+    send_info_db = config["pipeline"]["send_info_db"]
+    show_in_web = config["pipeline"]["show_in_web"]
 
-    # if save_video:
-    #     video_saver_node = VideoSaverNode(config["video_saver_node"])
+    if save_video:
+        video_saver_node = VideoSaverNode(config["video_saver_node"])
 
-    # if send_info_db:
-    #     send_info_db_node = SendInfoDBNode(config)
+    if send_info_db:
+        send_info_db_node = SendInfoDBNode(config)
 
-    # if show_in_web:
-    #     video_server_node = VideoServer(config)
-    #     video_server_node.run()
+    if show_in_web:
+        video_server_node = VideoServer(config)
+        video_server_node.run()
 
     for frame_element in video_reader.process():
 
@@ -38,13 +38,13 @@ def main(config) -> None:
         frame_element = tracker_info_update_node.process(frame_element)
         frame_element = calc_statistics_node.process(frame_element)
 
-        if send_info_db:
-            frame_element = send_info_db_node.process(frame_element)
+        # if send_info_db:
+        #     frame_element = send_info_db_node.process(frame_element)
 
         frame_element = show_node.process(frame_element)
 
-        if save_video:
-            video_saver_node.process(frame_element)
+        # if save_video:
+        #     video_saver_node.process(frame_element)
 
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
