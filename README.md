@@ -78,5 +78,8 @@ ultralytics (включает и YOLOv8m), в третьем уже происх
 
 __Пример демонстрации трекинга машин:__
 ![Traffic statistics 1](content_for_readme/trim-video.gif)
+## 2. Определяем поле для считывания машин.
 
+Создали поле при пересечении которого середины bboxа, он засчитывается:
+![Traffic statistics 2](content_for_readme/aurora.gif)
 vbr9vb9bv9rb9vb9ii
