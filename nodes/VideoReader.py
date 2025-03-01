@@ -85,7 +85,10 @@ class VideoReader:
             self.last_frame_timestamp = timestamp
 
             frame_number += 1
-
+            print('----------------------1-------------------------------')
+            print(self.video_source, frame.shape, timestamp,
+                  frame_number, self.roads_info)
+            print('--------------------1_end-----------------------------')
             yield FrameElement(self.video_source, frame, timestamp, frame_number, self.roads_info)
             # на выходе:
             # путь до видео,

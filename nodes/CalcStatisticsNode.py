@@ -62,5 +62,5 @@ class CalcStatisticsNode:
 
         # Запись результатов обработки:
         frame_element.info = info_dictionary
-
+        print(f'((((((((((((({info_dictionary})))))))))))))')
         return frame_element

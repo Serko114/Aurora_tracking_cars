@@ -51,26 +51,9 @@ class DetectionTrackingNodes:
         outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=True,
                                      iou=self.iou, classes=self.classes_to_detect,
                                      )
-        # print('--------------------')
-        # print('+++')
-        # # print(outputs[0])
-        # print('+++')
-        # print(outputs[0].boxes)
-        # print('--------------------')
+
         frame_element.detected_conf = outputs[0].boxes.conf.cpu().tolist()
         detected_cls = outputs[0].boxes.cls.cpu().int().tolist()
-        # print('--------------------')
-        # print(frame_element.detected_conf)
-        # print('--------------------')
-        # frame_element.detected_cls = [self.classes[i] for i in detected_cls]
-        # print('--------------------')
-        # print(frame_element.detected_cls)
-        # print('--------------------')
-        # frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu(
-        # ).int().tolist()
-        # print('--------------------')
-        # print(frame_element.detected_xyxy)
-        # print('--------------------')
 
         # Преподготовка данных на подачу в трекер
         detections_list = self._get_results_dor_tracker(outputs)
@@ -95,21 +78,29 @@ class DetectionTrackingNodes:
 
         # Получение conf scores
         frame_element.tracked_conf = [t.score for t in track_list]
+        print('----------------------2-------------------------------')
 
+        print(
+            frame_element.frame.shape, frame_element.timestamp,
+        )
+        print(
+            frame_element.detected_conf, frame_element.id_list, frame_element.tracked_xyxy,
+            frame_element.tracked_cls, frame_element.tracked_conf)
+        print('--------------------2_end-----------------------------')
         return frame_element
 
     def _get_results_dor_tracker(self, results) -> np.ndarray:
         # Приведение данных в правильную форму для трекера
         detections_list = []
         for result in results[0]:
-            print('------------')
-            print(result)
-            print('------------')
+            # print('------------')
+            # print(result)
+            # print('------------')
             class_id = result.boxes.cls.cpu().numpy().astype(int)
             # трекаем те же классы что и детектируем
-            print(f'--------{class_id}----------')
+            # print(f'--------{class_id}----------')
             if class_id[0] in self.classes_to_detect:
-                print(f'=========={class_id[0]}==============')
+                # print(f'=========={class_id[0]}==============')
                 bbox = result.boxes.xyxy.cpu().numpy()
                 confidence = result.boxes.conf.cpu().numpy()
 

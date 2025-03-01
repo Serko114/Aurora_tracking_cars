@@ -22,7 +22,7 @@ class TrackerInfoUpdateNode:
         self.size_buffer_analytics += config_general["min_time_life_track"]
         self.buffer_tracks = {}  # Буфер актуальных треков
 
-    @profile_time 
+    @profile_time
     def process(self, frame_element: FrameElement) -> FrameElement:
         # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
         if isinstance(frame_element, VideoEndBreakElement):
@@ -58,7 +58,8 @@ class TrackerInfoUpdateNode:
 
         # Удаление старых айдишников из словаря если их время жизни > size_buffer_analytics
         keys_to_remove = []
-        for key, track_element in sorted(self.buffer_tracks.items()):  # Сортируем элементы по ключу
+        # Сортируем элементы по ключу
+        for key, track_element in sorted(self.buffer_tracks.items()):
             if frame_element.timestamp - track_element.timestamp_first < self.size_buffer_analytics:
                 break  # Прерываем цикл, если значение time_delta больше check
             else:
@@ -70,5 +71,16 @@ class TrackerInfoUpdateNode:
 
         # Запись результатов обработки:
         frame_element.buffer_tracks = self.buffer_tracks
+        print('----------------------3-------------------------------')
 
+        print(
+            frame_element.frame.shape, frame_element.timestamp,
+        )
+        print(
+            frame_element.detected_conf, frame_element.id_list, frame_element.tracked_xyxy,
+            frame_element.tracked_cls, frame_element.tracked_conf)
+        print(
+            frame_element.buffer_tracks,
+        )
+        print('--------------------3_end-----------------------------')
         return frame_element

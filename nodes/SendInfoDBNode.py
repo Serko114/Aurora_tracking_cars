@@ -64,13 +64,12 @@ class SendInfoDBNode:
             timestamp_date TIMESTAMP,
             cars INTEGER,
             road_1 FLOAT,
-            road_2 FLOAT,
-            road_3 FLOAT,
-            road_4 FLOAT,
-            road_5 FLOAT
         );
         """
-
+        # road_2 FLOAT,
+        # road_3 FLOAT,
+        # road_4 FLOAT,
+        # road_5 FLOAT
         # Создание таблицы
         try:
             self.cursor.execute(create_table_query)
@@ -108,10 +107,12 @@ class SendInfoDBNode:
         self, info_dictionary: dict, timestamp: float, timestamp_date: float
     ) -> None:
         # Формирование и выполнение SQL-запроса для вставки данных в бд
+        print('0000000000000000000000000000000000000000000')
         insert_query = (
             f"INSERT INTO {self.table_name} "
-            "(timestamp, timestamp_date, cars, road_1, road_2, road_3, road_4, road_5) "
-            "VALUES (%s, to_timestamp(%s), %s, %s, %s, %s, %s, %s);"
+            # , road_2, road_3, road_4, road_5) "
+            "(timestamp, timestamp_date, cars, road_1)"
+            "VALUES (%s, to_timestamp(%s), %s, %s);"  # , %s, %s, %s, %s);"
         )
         try:
             self.cursor.execute(
@@ -125,29 +126,30 @@ class SendInfoDBNode:
                         if timestamp >= self.buffer_analytics_sec
                         else None
                     ),
-                    (
-                        info_dictionary["roads_activity"][2]
-                        if timestamp >= self.buffer_analytics_sec
-                        else None
-                    ),
-                    (
-                        info_dictionary["roads_activity"][3]
-                        if timestamp >= self.buffer_analytics_sec
-                        else None
-                    ),
-                    (
-                        info_dictionary["roads_activity"][4]
-                        if timestamp >= self.buffer_analytics_sec
-                        else None
-                    ),
-                    (
-                        info_dictionary["roads_activity"][5]
-                        if timestamp >= self.buffer_analytics_sec
-                        else None
-                    ),
+                    # (
+                    #     info_dictionary["roads_activity"][2]
+                    #     if timestamp >= self.buffer_analytics_sec
+                    #     else None
+                    # ),
+                    # (
+                    #     info_dictionary["roads_activity"][3]
+                    #     if timestamp >= self.buffer_analytics_sec
+                    #     else None
+                    # ),
+                    # (
+                    #     info_dictionary["roads_activity"][4]
+                    #     if timestamp >= self.buffer_analytics_sec
+                    #     else None
+                    # ),
+                    # (
+                    #     info_dictionary["roads_activity"][5]
+                    #     if timestamp >= self.buffer_analytics_sec
+                    #     else None
+                    # ),
                 ),
             )
             self.connection.commit()
             logger.info(f"Successfully inserted data into PostgreSQL")
         except (Exception, psycopg2.Error) as error:
-            logger.error(f"Error while inserting data into PostgreSQL: {error}")
+            logger.error(
+                f"Error while inserting data into PostgreSQL: {error}")
